@@ -1,6 +1,8 @@
 from rest_framework import serializers 
 from django.contrib.auth.models import User
-from .models import CustomUser
+from .models import (
+    CustomUser
+)
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.contrib.auth import authenticate
 from django.contrib.auth import get_user_model
@@ -9,9 +11,10 @@ User = get_user_model()
 class RegisterSerializer(serializers.ModelSerializer): 
     class Meta: 
         model = CustomUser 
-        fields = ['username', 'email', 'password', 'first_name', 'last_name', 'dob', 'mobile'] 
+        fields = ['username', 'email', 'password', 'first_name', 'last_name', 'dob', 'mobile', 'is_staff'] 
         extra_kwargs = { 
             'password': {'write_only': True},
+            'is_staff': {'required':False, 'default':False},
             } 
     
     def create(self, validated_data): 
@@ -48,10 +51,6 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         data = { 
             'refresh': str(refresh), 
             'access': str(refresh.access_token), 
-            'user':{
-                user.get_full_name(),
-                user.email
-            }
         }
 
         return data
